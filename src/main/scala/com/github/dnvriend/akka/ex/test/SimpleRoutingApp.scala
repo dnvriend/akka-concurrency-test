@@ -16,24 +16,16 @@
 
 package com.github.dnvriend.akka.ex.test
 
-import java.util.concurrent.Executors
-import scala.concurrent._
-import scala.concurrent.duration._
+import akka.actor.ActorSystem
+import akka.http.scaladsl._
+import akka.http.scaladsl.model.{ HttpRequest, HttpResponse }
+import akka.http.scaladsl.server.Directives
+import akka.stream.{ ActorMaterializer, Materializer }
+import akka.stream.scaladsl.Flow
 
-object Test5 extends App {
-
-  implicit val ec = ExecutionContext.fromExecutorService(Executors.newCachedThreadPool)
-
-  def calc = Future {
-    (1 to 20)
-      .map(_ * 2)
-      .map { e ⇒
-        Thread.sleep((1 second).toMillis)
-        val calc = e + 2
-        println(Thread.currentThread().getName + ": " + calc)
-        calc
-      }
-  }
-
-  Await.ready(Future.sequence((1 to 10).map(_ ⇒ calc).toList), 5 minutes)
+trait SimpleRoutingApp extends App with Directives {
+  implicit def system: ActorSystem
+  implicit lazy val mat: Materializer = ActorMaterializer()
+  def startServer(interface: String, port: Int)(handler: Flow[HttpRequest, HttpResponse, Any]) =
+    Http().bindAndHandle(handler, interface, port)
 }

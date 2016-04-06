@@ -1,39 +1,23 @@
-organization := "com.github.dnvriend"
-
 name := "akka-concurrency-test"
+
+organization := "com.github.dnvriend"
 
 version := "0.0.1-SNAPSHOT"
 
-scalaVersion := "2.11.2"
+scalaVersion := "2.11.8"
 
-resolvers += "spray" at "http://repo.spray.io/"
-
-resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
-
-libraryDependencies ++=
-  {	val scalaV = "2.11.2"
-    val akkaV = "2.3.6"
-    val sprayV = "1.3.1"
-    val shapelessV = "2.0.0"
-    val jsonV = "1.2.6"    
-    Seq(
-      "org.scala-lang"       % "scala-library"                % scalaV withSources() withJavadoc(),
-      "org.scala-lang"       % "scala-actors"                 % "2.10.2" withSources() withJavadoc(),
-      "com.typesafe.akka"   %% "akka-actor"                   % akkaV withSources() withJavadoc(),
-      "com.typesafe.akka"   %% "akka-slf4j"                   % akkaV withSources() withJavadoc(),
-      "ch.qos.logback"       % "logback-classic"              % "1.1.2",
-      "com.github.dnvriend" %% "akka-persistence-inmemory"    % "0.0.2",
-      "org.scalikejdbc"     %% "scalikejdbc"                  % "2.1.1",
-      "postgresql"           % "postgresql"                   % "9.1-901.jdbc4",
-      "io.spray"            %% "spray-httpx"                  % sprayV,
-      "io.spray"            %% "spray-routing-shapeless2"     % sprayV,
-      "io.spray"            %% "spray-util"                   % sprayV,
-      "io.spray"            %% "spray-io"                     % sprayV,
-      "io.spray"            %% "spray-can"                    % sprayV,
-      "io.spray"            %% "spray-client"                 % sprayV,
-      "io.spray"            %% "spray-json"                   % jsonV
-    )
-  }
+libraryDependencies ++= {
+  val akkaVersion = "2.4.3"
+  Seq(
+    "com.typesafe.akka" %% "akka-actor" % akkaVersion,
+    "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
+    "com.typesafe.akka" %% "akka-http-experimental" % akkaVersion,
+    "com.typesafe.akka" %% "akka-http-spray-json-experimental" % akkaVersion,
+    "ch.qos.logback" % "logback-classic" % "1.1.2",
+    "org.scalikejdbc" %% "scalikejdbc" % "2.1.1",
+    "org.postgresql" % "postgresql" % "9.4-1206-jdbc42"
+  )
+}
 
 autoCompilerPlugins := true
 
@@ -43,4 +27,25 @@ publishMavenStyle := true
 
 publishArtifact in Test := false
 
-net.virtualvoid.sbt.graph.Plugin.graphSettings
+licenses +=("Apache-2.0", url("http://opensource.org/licenses/apache2.0.php"))
+
+// enable scala code formatting //
+import scalariform.formatter.preferences._
+import com.typesafe.sbt.SbtScalariform
+
+// Scalariform settings
+SbtScalariform.autoImport.scalariformPreferences := SbtScalariform.autoImport.scalariformPreferences.value
+  .setPreference(AlignSingleLineCaseStatements, true)
+  .setPreference(AlignSingleLineCaseStatements.MaxArrowIndent, 100)
+  .setPreference(DoubleIndentClassDeclaration, true)
+  .setPreference(RewriteArrowSymbols, true)
+
+// enable updating file headers //
+import de.heikoseeberger.sbtheader.license.Apache2_0
+
+headers := Map(
+  "scala" -> Apache2_0("2016", "Dennis Vriend"),
+  "conf" -> Apache2_0("2016", "Dennis Vriend", "#")
+)
+
+enablePlugins(AutomateHeaderPlugin)
