@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package com.github.dnvriend.akka.ex.test
+package com.github.dnvriend
 
 import akka.actor.ActorSystem
+import akka.http.scaladsl.server.PathMatchers.Segment
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
+
 import scala.concurrent.duration._
 
 object Test10 extends App with SimpleRoutingApp {

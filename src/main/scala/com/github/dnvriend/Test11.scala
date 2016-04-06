@@ -14,22 +14,42 @@
  * limitations under the License.
  */
 
-package com.github.dnvriend.akka.ex.test
+package com.github.dnvriend
 
-import java.util.concurrent.atomic.AtomicInteger
-import java.util.concurrent.{ Executors, ForkJoinPool, ThreadFactory }
-
-import akka.actor.{ Actor, ActorLogging, ActorSystem, Props }
+import akka.actor.{ ActorLogging, _ }
 import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.server.PathMatchers.Segment
 import akka.pattern.ask
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
 import scalikejdbc._
 
-import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration._
 
-object Test12 extends App with SimpleRoutingApp {
+object Test11 extends App with SimpleRoutingApp {
+  object JdbcActor {
+    Class.forName("org.postgresql.Driver")
+    ConnectionPool.singleton("jdbc:postgresql://boot2docker:5432/docker", "docker", "docker")
+    implicit val session = AutoSession
+
+    case class Save(msg: String)
+
+    def props = Props(new JdbcActor)
+
+    def writeToDb(msg: String) = SQL("INSERT INTO messages values (?)").bind(msg).update().apply()
+
+    def numRecords = SQL("SELECT COUNT(*) FROM messages").map(rs ⇒ rs.string(1)).single().apply()
+  }
+
+  class JdbcActor extends Actor with ActorLogging {
+    import JdbcActor._
+    override def receive: Receive = {
+      case Save(msg) ⇒
+        writeToDb(msg)
+        sender ! numRecords.get
+    }
+  }
+
   implicit val system = ActorSystem("system", ConfigFactory.parseString(
     """
       | akka {
@@ -37,9 +57,9 @@ object Test12 extends App with SimpleRoutingApp {
       |      actor {
       |        default-dispatcher = {
       |          fork-join-executor {
-      |            parallelism-min = 8
-      |            parallelism-factor = 3
-      |            parallelism-max = 64
+      |            parallelism-min = 1
+      |            parallelism-factor = 1
+      |            parallelism-max = 1
       |          }
       |        }
       |      }
@@ -86,39 +106,5 @@ object Test12 extends App with SimpleRoutingApp {
           }
         }
     }
-  }
-}
-
-class MyThreadFactory extends ThreadFactory {
-  val poolNumber = new AtomicInteger(0)
-  override def newThread(r: Runnable): Thread = {
-    new Thread(r, "MyThread: " + poolNumber.addAndGet(1))
-  }
-}
-
-object JdbcActor {
-  implicit val ec = ExecutionContext.fromExecutorService(Executors.newCachedThreadPool(new MyThreadFactory))
-  Class.forName("org.postgresql.Driver")
-  ConnectionPool.singleton("jdbc:postgresql://boot2docker:5432/docker", "docker", "docker")
-  implicit val session = AutoSession
-
-  case class Save(msg: String)
-
-  def props = Props(new JdbcActor)
-
-  def writeToDb(msg: String) = Future { SQL("INSERT INTO messages values (?)").bind(msg).update().apply() }
-
-  def selectAll = Future { SQL("SELECT * FROM messages").update.apply }
-
-  def numRecords = SQL("SELECT COUNT(*) FROM messages").map(rs ⇒ rs.string(1)).single().apply()
-}
-
-class JdbcActor extends Actor with ActorLogging {
-  import com.github.dnvriend.akka.ex.test.JdbcActor._
-  override def receive: Receive = {
-    case Save(msg) ⇒
-      writeToDb(msg)
-      selectAll
-      sender ! numRecords.get
   }
 }

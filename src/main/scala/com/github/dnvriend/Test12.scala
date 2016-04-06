@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package com.github.dnvriend.akka.ex.test
+package com.github.dnvriend
 
-import akka.actor.{ Actor, ActorLogging, ActorSystem, Props }
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.{ Executors, ThreadFactory }
+
+import akka.actor.{ ActorLogging, _ }
 import akka.http.scaladsl.model.StatusCodes
 import akka.pattern.ask
 import akka.util.Timeout
@@ -24,9 +27,12 @@ import com.typesafe.config.ConfigFactory
 import scalikejdbc._
 
 import scala.concurrent.duration._
+import scala.concurrent.{ ExecutionContext, Future }
 
-object Test11 extends App with SimpleRoutingApp {
+object Test12 extends App with SimpleRoutingApp {
+
   object JdbcActor {
+    implicit val ec = ExecutionContext.fromExecutorService(Executors.newCachedThreadPool(new MyThreadFactory))
     Class.forName("org.postgresql.Driver")
     ConnectionPool.singleton("jdbc:postgresql://boot2docker:5432/docker", "docker", "docker")
     implicit val session = AutoSession
@@ -35,7 +41,9 @@ object Test11 extends App with SimpleRoutingApp {
 
     def props = Props(new JdbcActor)
 
-    def writeToDb(msg: String) = SQL("INSERT INTO messages values (?)").bind(msg).update().apply()
+    def writeToDb(msg: String) = Future { SQL("INSERT INTO messages values (?)").bind(msg).update().apply() }
+
+    def selectAll = Future { SQL("SELECT * FROM messages").update.apply }
 
     def numRecords = SQL("SELECT COUNT(*) FROM messages").map(rs ⇒ rs.string(1)).single().apply()
   }
@@ -45,6 +53,7 @@ object Test11 extends App with SimpleRoutingApp {
     override def receive: Receive = {
       case Save(msg) ⇒
         writeToDb(msg)
+        selectAll
         sender ! numRecords.get
     }
   }
@@ -56,9 +65,9 @@ object Test11 extends App with SimpleRoutingApp {
       |      actor {
       |        default-dispatcher = {
       |          fork-join-executor {
-      |            parallelism-min = 1
-      |            parallelism-factor = 1
-      |            parallelism-max = 1
+      |            parallelism-min = 8
+      |            parallelism-factor = 3
+      |            parallelism-max = 64
       |          }
       |        }
       |      }
@@ -105,5 +114,12 @@ object Test11 extends App with SimpleRoutingApp {
           }
         }
     }
+  }
+}
+
+class MyThreadFactory extends ThreadFactory {
+  val poolNumber = new AtomicInteger(0)
+  override def newThread(r: Runnable): Thread = {
+    new Thread(r, "MyThread: " + poolNumber.addAndGet(1))
   }
 }

@@ -10,24 +10,21 @@ libraryDependencies ++= {
   val akkaVersion = "2.4.3"
   Seq(
     "com.typesafe.akka" %% "akka-actor" % akkaVersion,
+    "com.typesafe.akka" %% "akka-stream" % akkaVersion,
     "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
     "com.typesafe.akka" %% "akka-http-experimental" % akkaVersion,
     "com.typesafe.akka" %% "akka-http-spray-json-experimental" % akkaVersion,
     "ch.qos.logback" % "logback-classic" % "1.1.2",
     "org.scalikejdbc" %% "scalikejdbc" % "2.1.1",
-    "org.postgresql" % "postgresql" % "9.4-1206-jdbc42"
+    "org.postgresql" % "postgresql" % "9.4-1206-jdbc42",
+    "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,
+    "org.scalatest" %% "scalatest" % "2.2.5" % Test
   )
 }
 
-autoCompilerPlugins := true
-
-scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
-
-publishMavenStyle := true
-
-publishArtifact in Test := false
-
 licenses +=("Apache-2.0", url("http://opensource.org/licenses/apache2.0.php"))
+
+fork in Test := true
 
 // enable scala code formatting //
 import scalariform.formatter.preferences._

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.dnvriend.akka.ex.test
+package com.github.dnvriend
 
 import java.util.concurrent.Executors
 import scala.concurrent._

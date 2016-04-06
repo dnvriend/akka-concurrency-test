@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package com.github.dnvriend.akka.ex.test
+package com.github.dnvriend
 
-import akka.actor.ActorSystem
-import akka.http.scaladsl._
-import akka.http.scaladsl.model.{ HttpRequest, HttpResponse }
-import akka.http.scaladsl.server.Directives
-import akka.stream.{ ActorMaterializer, Materializer }
-import akka.stream.scaladsl.Flow
+import scala.concurrent.duration._
 
-trait SimpleRoutingApp extends App with Directives {
-  implicit def system: ActorSystem
-  implicit lazy val mat: Materializer = ActorMaterializer()
-  def startServer(interface: String, port: Int)(handler: Flow[HttpRequest, HttpResponse, Any]) =
-    Http().bindAndHandle(handler, interface, port)
+object Test1 extends App {
+  def calc(name: String, max: Int = 0): Unit =
+    (1 to max)
+      .map(_ * 2)
+      .map { e ⇒
+        Thread.sleep((1.second).toMillis)
+        val calc = e + 2
+        println(name + ": " + calc)
+        calc
+      }
+  calc("fut2", 10)
+  Thread.sleep((5.seconds).toMillis)
 }

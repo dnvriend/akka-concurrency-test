@@ -14,20 +14,26 @@
  * limitations under the License.
  */
 
-package com.github.dnvriend.akka.ex.test
+package com.github.dnvriend
 
+import java.util.concurrent.Executors
+import scala.concurrent._
 import scala.concurrent.duration._
 
-object Test1 extends App {
-  def calc(name: String, max: Int = 0): Unit =
-    (1 to max)
-    .map(_ * 2)
-    .map { e ⇒
-      Thread.sleep((1.second).toMillis)
-      val calc = e + 2
-      println(name + ": " + calc)
-      calc
-    }
-  calc("fut2", 10)
-  Thread.sleep((5.seconds).toMillis)
+object Test5 extends App {
+
+  implicit val ec = ExecutionContext.fromExecutorService(Executors.newCachedThreadPool)
+
+  def calc = Future {
+    (1 to 20)
+      .map(_ * 2)
+      .map { e ⇒
+        Thread.sleep((1 second).toMillis)
+        val calc = e + 2
+        println(Thread.currentThread().getName + ": " + calc)
+        calc
+      }
+  }
+
+  Await.ready(Future.sequence((1 to 10).map(_ ⇒ calc).toList), 5 minutes)
 }

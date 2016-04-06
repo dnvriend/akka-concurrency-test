@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.github.dnvriend.akka.ex.test
+package com.github.dnvriend
 
 import java.util.concurrent.Executors
 import scala.concurrent._
 import scala.concurrent.duration._
 
-object Test3 extends App {
+object Test4 extends App {
 
-  implicit val ec = ExecutionContext.fromExecutorService(Executors.newWorkStealingPool(2))
+  implicit val ec = ExecutionContext.fromExecutorService(Executors.newCachedThreadPool)
 
   def calc(name: String, max: Int = 0) = (1 to max)
     .map(_ * 2)
