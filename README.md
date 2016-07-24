@@ -17,6 +17,12 @@ am far from being an expert. That said, there are some great minds in this field
 - [Akka Documentation - Dispatchers](http://doc.akka.io/docs/akka/2.3.6/scala/dispatchers.html)
 - [PlayFramework Configuration - Thread Pool Configuration](https://www.playframework.com/documentation/2.3.x/ThreadPools)
 
+# Video
+- [Brian Goetz - From Concurrent to Parallel - (2016)](https://www.youtube.com/watch?v=QicNusGdz4g)
+- [José Paumard - Fork / Join, lambda & parallel, parallel computing made (too) easy? (2016)](https://www.youtube.com/watch?v=h1N-qbo5VyY)
+- [Stuart Marks & Brian Goetz - API Design With Java 8 Lambda and Streams (2016)](https://www.youtube.com/watch?v=9uTVXxJjuco)
+- [Venkat Subramaniam - Get a Taste of Lambdas and Get Addicted to Streams (November - 2015)](https://www.youtube.com/watch?v=1OpAgZvYXLQ)
+
 # First some definitions
 I know, this is a copy/paste of a lot of resources on the Internet, but I found that having all the necessary information for 
 this subject in one place reads really well. Better than switching browser tabs in any case! Please read the subject you 
@@ -588,6 +594,3 @@ akka {
   }
 }
 ```
-
-## Examples
-           
