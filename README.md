@@ -576,17 +576,18 @@ doing database synchronous IO calls, such as accessing a database, and you donâ€
 for different types of work. This profile is the simplest for handling blocking IO. In this profile, you would simply use 
 the default execution context everywhere, but configure it to have ''a very large number of threads'' in its pool, like so:
 
-  
-    akka {
-      actor {
-        default-dispatcher = {
-          fork-join-executor {
-            parallelism-min = 300
-            parallelism-max = 300
-          }
-        }
+```
+akka {
+  actor {
+    default-dispatcher = {
+      fork-join-executor {
+        parallelism-min = 300
+        parallelism-max = 300
       }
     }
-            
+  }
+}
+```
+
 ## Examples
            
