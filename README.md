@@ -22,6 +22,7 @@ am far from being an expert. That said, there are some great minds in this field
 - [José Paumard - Fork / Join, lambda & parallel, parallel computing made (too) easy? (2016)](https://www.youtube.com/watch?v=h1N-qbo5VyY)
 - [Stuart Marks & Brian Goetz - API Design With Java 8 Lambda and Streams (2016)](https://www.youtube.com/watch?v=9uTVXxJjuco)
 - [Venkat Subramaniam - Get a Taste of Lambdas and Get Addicted to Streams (November - 2015)](https://www.youtube.com/watch?v=1OpAgZvYXLQ)
+- [Kristo Iila - Simplifying concurrency: Actors (In particular, Akka)](https://www.youtube.com/watch?v=cgOfEVid4Cs)
 
 # First some definitions
 I know, this is a copy/paste of a lot of resources on the Internet, but I found that having all the necessary information for 
