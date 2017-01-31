@@ -595,3 +595,6 @@ akka {
   }
 }
 ```
+
+## Reactive Frameworks
+Now that you know a lot about the execution model of Scala and Akka, you could read up on [Reactive Frameworks](https://github.com/dnvriend/reactive-frameworks), which are the [playframework](https://www.playframework.com/) and [Lagomframework](http://www.lagomframework.com/) and of course [Akka](http://akka.io/) and how they compare against the mainstream [Java Platform, Enterprise Edition (Java EE)](http://www.oracle.com/technetwork/java/javaee/overview/index.html) and [Spring](https://spring.io/) frameworks.
